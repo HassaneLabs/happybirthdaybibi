@@ -1,0 +1,38 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="stylesheet" href="css/theme.css"><link rel="stylesheet" href="css/style.css"><title>Le labyrinthe</title><style>
+#g{display:grid;grid-template-columns:repeat(7,1fr);width:min(92vw,420px);aspect-ratio:1;gap:2px;background:linear-gradient(135deg,var(--main),var(--sec));padding:4px;border-radius:16px;touch-action:none;box-shadow:0 0 30px #ff4d8d88}
+.c{display:flex;align-items:center;justify-content:center;font-size:min(8vw,34px);border-radius:6px;background:var(--bg)}.c.w{background:transparent}
+#pad{display:grid;grid-template-columns:repeat(3,64px);gap:6px;margin:14px 0 60px}
+#pad button{height:64px;font-size:22px;border:0;border-radius:16px;background:#ffffff14;color:var(--text);border:1px solid #ff4d8d88;box-shadow:0 0 14px #ff4d8d55;backdrop-filter:blur(6px)}
+#cv{position:fixed;inset:0;pointer-events:none;z-index:55;display:none}
+#hb{position:absolute;font-size:min(90vw,420px);color:var(--main);opacity:.3;line-height:1;animation:beat 1.2s infinite}@keyframes beat{50%{transform:scale(1.08)}}
+#gift{flex-direction:column;background:linear-gradient(160deg,var(--bg),var(--sec))}
+#env{position:relative;width:260px;height:170px;background:var(--main);border-radius:8px;margin-top:100px;cursor:pointer;box-shadow:0 10px 30px #0006}
+#env:after{content:'';position:absolute;inset:0;background:var(--main);filter:brightness(.95);clip-path:polygon(0 0,50% 55%,100% 0,100% 100%,0 100%);z-index:2;pointer-events:none;border-radius:8px}
+#fl{position:absolute;top:0;left:0;width:100%;height:100px;background:var(--main);filter:brightness(.85);clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .6s,z-index 0s .3s;z-index:3}
+#env.open #fl{transform:rotateX(180deg);z-index:0}
+#let{position:absolute;left:12px;right:12px;bottom:10px;height:140px;background:#fffdf5;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:transform .8s .4s,height .8s .4s;z-index:1;color:#b0124f;font:700 1.15rem Georgia,serif;padding:8px}
+#env.open #let{transform:translateY(-110px);height:200px}
+#nx{display:none;margin-top:40px;z-index:2}
+</style></head><body>
+<h1>Aide le canard 🦆</h1><p>Glisse ton doigt (ou touche les flèches) pour le guider jusqu'à sa mare 🌊</p>
+<div id="g"></div>
+<div id="pad"><b></b><button data-d="0,-1">▲</button><b></b><button data-d="-1,0">◀</button><button data-d="0,1">▼</button><button data-d="1,0">▶</button></div>
+<canvas id="cv"></canvas>
+<div class="ov" id="po" style="z-index:70"><div class="box"><h2 id="pt"></h2><button class="btn tr" id="pb"></button></div></div>
+<div class="ov" id="gift"><div id="hb">❤</div><div id="env"><div id="let">HAPPY BIRTHDAY<br>MY WIFE ❤️</div><div id="fl"></div></div><a class="btn" id="nx" href="album.html">Suivant</a></div>
+<script src="js/config.js"></script><script src="js/music.js"></script><script>
+var M=["...#...","##.#.#.",".....#.",".#####.",".......","######.","......."],x=0,y=0,done=0,g=$('g');
+function draw(){g.innerHTML='';M.forEach(function(r,j){for(var i=0;i<7;i++){var c=document.createElement('div');c.className='c'+(r[i]=='#'?' w':'');c.textContent=(i==x&&j==y)?'🦆':(i==6&&j==6?'🌊':'');g.appendChild(c)}})}
+function mv(dx,dy){if(done)return;var nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>6||ny>6||M[ny][nx]=='#')return;x=nx;y=ny;draw();if(x==6&&y==6)win()}
+document.querySelectorAll('#pad button').forEach(function(b){b.onclick=function(){var d=b.dataset.d.split(',');mv(+d[0],+d[1])}});
+var sx,sy;g.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+g.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))<20)return;Math.abs(dx)>Math.abs(dy)?mv(dx>0?1:-1,0):mv(0,dy>0?1:-1)});
+addEventListener('keydown',function(e){var k={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(k)mv(k[0],k[1])});
+function pop(t,b,cb){$('pt').textContent=t;$('pb').textContent=b;$('pb').onclick=function(){$('po').classList.remove('on');cb()};$('po').classList.add('on')}
+function win(){done=1;pop('🎉 Félicitations, ton canard rejoint sa mare.','Youpi !',function(){conf();setTimeout(function(){pop('🎁 Tu as gagné ce cadeau !','Ouvrir mon cadeau',function(){$('gift').classList.add('on')})},2600)})}
+$('env').onclick=function(){this.classList.add('open');setTimeout(function(){$('nx').style.display='inline-block'},1500)};
+function conf(){var c=$('cv'),q=c.getContext('2d'),P=[],t=0;c.width=innerWidth;c.height=innerHeight;c.style.display='block';
+for(var i=0;i<140;i++)P.push({x:Math.random()*c.width,y:-20-Math.random()*c.height*.5,v:2+Math.random()*4,s:5+Math.random()*7,r:Math.random()*6,k:CFG.colors[i%CFG.colors.length]});
+(function f(){q.clearRect(0,0,c.width,c.height);P.forEach(function(p){p.y+=p.v;p.r+=.1;p.x+=Math.sin(p.r);q.fillStyle=p.k;q.fillRect(p.x,p.y,p.s,p.s*.6)});if(++t<160)requestAnimationFrame(f);else c.style.display='none'})()}
+draw();
+</script></body></html>

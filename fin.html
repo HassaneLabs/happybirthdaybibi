@@ -1,0 +1,12 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="stylesheet" href="css/theme.css"><link rel="stylesheet" href="css/style.css"><title>Message de fin</title><style>
+.paper{background:#ffffff12;backdrop-filter:blur(10px);border:1px solid #ff4d8d66;padding:22px;border-radius:16px;box-shadow:0 0 30px #ff4d8d44;max-width:520px;width:100%;text-align:left;white-space:pre-wrap;font:1.1rem/1.65 Georgia,serif;min-height:50vh;color:var(--text)}
+.paper:after{content:'|';animation:bl 1s steps(2) infinite}.done:after{content:''}@keyframes bl{50%{opacity:0}}
+#re{display:none;margin:24px 0 70px;animation:pop .6s}#sk{margin-top:14px;padding:8px 18px;font-size:.9rem}
+</style></head><body>
+<h1>Pour toi, Dantou 💌</h1><div class="paper" id="lt"></div>
+<button class="btn alt" id="sk">Passer</button><a class="btn" id="re" href="index.html">Rejouer le voyage</a>
+<script src="js/config.js"></script><script src="js/music.js"></script><script>
+var L=CFG.letter,k=0,el=$('lt'),iv=setInterval(function(){el.textContent=L.slice(0,++k);scrollTo(0,document.body.scrollHeight);if(k>=L.length)end()},35);
+function end(){clearInterval(iv);el.textContent=L;el.className='paper done';$('re').style.display='inline-block';$('sk').style.display='none';scrollTo(0,document.body.scrollHeight)}
+$('sk').onclick=end;
+</script></body></html>

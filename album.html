@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="stylesheet" href="css/theme.css"><link rel="stylesheet" href="css/style.css"><title>Toi et Moi</title><style>
+body{height:100dvh;overflow:hidden;padding:10px 10px 0}
+#top{display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:8px}#top h1{margin:0;font-size:1.6rem}
+#al{width:100%;flex:1;min-height:0;margin-bottom:56px;display:grid;grid-template-rows:1fr 1fr;grid-auto-flow:column;grid-auto-columns:calc(50% - 3px);gap:6px;overflow-x:scroll;overflow-y:hidden;scrollbar-width:none;position:relative;scroll-snap-type:none;scroll-behavior:auto}
+#al::-webkit-scrollbar{display:none}
+.it{border-radius:12px;overflow:hidden;background:var(--sec);min-height:0}
+.it img,.it video,.ph{width:100%;height:100%;object-fit:cover;display:block}
+.ph{display:flex;align-items:center;justify-content:center;font-size:2.4rem;background:linear-gradient(160deg,var(--sec),var(--main))}
+#vw{background:#000;z-index:70}#st{height:100%;aspect-ratio:9/16;max-width:100%}#st>*{width:100%;height:100%;object-fit:contain;background:#000}
+#x{position:fixed;top:14px;right:14px;z-index:75;border:0;border-radius:50%;width:44px;height:44px;font-size:20px;background:#fffd}
+</style></head><body>
+<div id="top"><h1>Toi et Moi</h1><a class="btn" href="univers.html" style="padding:9px 18px;font-size:.95rem">Suivant ➜</a></div>
+<div id="al"></div>
+<div class="ov" id="vw"><button id="x">✕</button><div id="st"></div></div>
+<script src="js/config.js"></script><script src="js/music.js"></script><script>
+var al=$('al'),L=[],pos=0,loop=0,paused=false,rt,wasOn=false,SPEED=CFG.albumSpeed; /* réglage dans js/config.js */
+var P=CFG.photos,V=CFG.videos,N=Math.max(P.length,V.length); /* alterne photo, vidéo, photo, vidéo... */
+for(var i=0;i<N;i++){if(P[i])L.push({t:'i',s:'assets/photos/'+P[i]});if(V[i])L.push({t:'v',s:'assets/videos/'+V[i]})}
+function ph(it){var d=document.createElement('div');d.className='ph';d.textContent=it.t=='i'?'📷':'🎬';return d}
+function mk(it){var d=document.createElement('div'),m=document.createElement(it.t=='i'?'img':'video');d.className='it';
+m.src=it.s+(it.t=='v'?'#t=0.1':'');if(it.t=='v'){m.muted=true;m.playsInline=true;m.preload='metadata'}
+m.onerror=function(){m.replaceWith(ph(it))};d.appendChild(m);d.onclick=function(){show(it)};return d}
+L.concat(L.slice(0,4)).forEach(function(it){al.appendChild(mk(it))}); /* 4 éléments copiés à la fin = boucle sans saut */
+function calc(){loop=al.children[L.length].offsetLeft-al.children[0].offsetLeft}
+addEventListener('load',calc);addEventListener('resize',calc);setTimeout(calc,300);
+function step(){if(!paused&&loop){pos+=SPEED;if(pos>=loop)pos-=loop;al.scrollLeft=pos}requestAnimationFrame(step)}
+function stop(){paused=true;clearTimeout(rt)}
+function go(){clearTimeout(rt);rt=setTimeout(function(){pos=al.scrollLeft;paused=false},2500)}
+al.addEventListener('touchstart',stop,{passive:true});al.addEventListener('touchend',go);al.addEventListener('touchcancel',go);
+al.addEventListener('scroll',function(){if(paused&&loop&&al.scrollLeft>=loop)al.scrollLeft-=loop});
+requestAnimationFrame(step);
+function show(it){stop();var s=$('st'),m=document.createElement(it.t=='i'?'img':'video');s.innerHTML='';m.src=it.s;
+if(it.t=='v'){m.controls=true;m.autoplay=true;m.playsInline=true;wasOn=!MP.a.paused&&MP.on();MP.a.pause()}
+m.onerror=function(){m.replaceWith(ph(it))};s.appendChild(m);$('vw').classList.add('on')}
+$('x').onclick=function(){$('st').innerHTML='';$('vw').classList.remove('on');if(wasOn){MP.a.play();wasOn=false}pos=al.scrollLeft;paused=false};
+</script></body></html>

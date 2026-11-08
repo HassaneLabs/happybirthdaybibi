@@ -1,0 +1,10 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="stylesheet" href="css/theme.css"><link rel="stylesheet" href="css/style.css"><title>Joyeux anniversaire Dantou</title></head><body>
+<main style="margin:auto"><div class="orb">❤</div><h1>Joyeux anniversaire<br>Dantou</h1><p>7 novembre 2026<br>Un petit voyage rien que pour toi…</p><a class="btn" href="maze.html">Commencer</a></main>
+<div class="ov on" id="o1"><div class="box"><h2>Veux-tu mettre de la musique ?</h2><button class="btn tr" id="yes">Oui 🎵</button><button class="btn alt tr" id="no">Non</button></div></div>
+<div class="ov" id="o2"><div class="box"><h2>Choisis ta musique</h2><div id="list"></div></div></div>
+<script src="js/config.js"></script><script src="js/music.js"></script><script>
+if(MP.on())$('o1').classList.remove('on');
+$('no').onclick=function(){$('o1').classList.remove('on')};
+$('yes').onclick=function(){$('o1').classList.remove('on');$('o2').classList.add('on')};
+CFG.tracks.forEach(function(t,n){var b=document.createElement('button');b.className='btn alt tr';b.textContent='🎶 '+t.t;b.onclick=function(){MP.play(n);$('o2').classList.remove('on')};$('list').appendChild(b)});
+</script></body></html>
